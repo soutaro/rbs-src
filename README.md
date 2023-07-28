@@ -1,6 +1,35 @@
 # rbs-src
 
-rbs-src allows using and editing RBS files from `rbs collection`.
+rbs-src helps editing RBS files with `rbs collection`.
+
+## The workflow
+
+rbs-src helps editing RBS files by having git repositories for each gems and making symlinks to the repositories.
+
+Assume you have a rbs collection setup loading activesupport-7.0 and sidekiq-6.2.
+Running the `rbs-src setup` will make repositories and symlinks as the following:
+
+```
+- (Repository root)
+  - Gemfile and other files
+  - rbs_collection.yaml
+  - rbs_collection.lock.yaml
+  - tmp/rbs-src
+    - activesupport-7.0               (a working copy of https://github.com/ruby/rbs_gem_collection.git)
+      - gems/activesupport/7.0/*.rbs  (RBS files for activesupport-7.0)
+    - sidekiq-6.0                     (another working copy of https://github.com/ruby/rbs_gem_collection.git)
+      - gems/sidekiq/6.2/*.rbs        (RBS files for sidekiq-6.2)
+  - sig/
+    - **/*.rbs                        (RBS files for your Ruby program)
+    - rbs-src/activesupport-7.0       (Symlink to /tmp/rbs-src/activesupport-7.0/gems/activesupport/7.0)
+    - rbs-src/sidekiq-6.2             (Symlink to /tmp/rbs-src/sidekiq-6.2/gems/sidekiq/6.2)
+```
+
+The project structure allows the following workflow:
+
+1. You can edit the RBS files of rbs collection directly through `sig/rbs-src/*/**.rbs`
+2. Your changes are detected by Steep and used to type check your Ruby program code
+3. You can push your changes to upstream through the git repositories under `tmp/rbs-src`
 
 ## Installation
 
@@ -8,22 +37,45 @@ rbs-src allows using and editing RBS files from `rbs collection`.
 
 ## Usage
 
-### Downloading the latest RBS files
+### rbs-src setup
 
-    $ rbs-src setup --repo-prefix=tmp/rbs_collection --rbs-prefix=sig/gems
+Load gem dependencies from `rbs_collection.lock.yaml` and set up all repositories and symlinks.
 
-### Making a symlink
+    $ rbs-src setup
 
-    $ rbs-src link https://github.com/ruby/gem_rbs_collection.git activesupport 6.0
-    $ rbs-src link --repo-prefix=... --rbs-prefix=... --force https://github.com/ruby/gem_rbs_collection.git activesupport 6.0
+#### For Steep users
 
-### Opening the git repository
+You need to edit your Steepfile to let the type checker stop using rbs-collection.
 
-    $ rbs-src path activesupport
-    $ rbs-src path --absolute activesupport
+```ruby
+# Steepfile
 
-    $ rbs-src open --with=open activesupport
-    $ rbs-src open --with="subl -w" activesupport
+target ... do
+  # Existing config...
+
+  # Add `#signature` call to support loading RBS files from symlinked directory
+  signature "sig/rbs-src/*/**/*.rbs"
+
+  # Stop loading libraries through rbs-collection
+  disable_collection()
+
+  # Load standard libraries and gems manually
+  library('abbrev')
+  library('date')
+  # ...
+end
+```
+
+### rbs-src link
+
+The command clones and set up a symlink of a ruby gem, not loaded from `rbs_collection.lock.yaml`.
+
+    $ rbs-src link https://github.com/ruby/gem_rbs_collection.git active_emoji 0.0
+
+This is typically useful for adding new gem to one of the collections.
+The command will clone the git repository for `active_emoji-0.0` and make a symlink to non-existing directory.
+You can add directories in the repository for `active_emoji-0.0` and start writing RBS files through the symlink.
+Once you finished the edit, you can push the RBS files to upstream!
 
 ## Development
 
@@ -33,7 +85,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/rbs-src. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/rbs-src/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/soutaro/rbs-src. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/soutaro/rbs-src/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -41,4 +93,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Rbs::Src project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/rbs-src/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the Rbs::Src project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/soutaro/rbs-src/blob/main/CODE_OF_CONDUCT.md).
