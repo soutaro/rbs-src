@@ -1,0 +1,7 @@
+module Rbs
+  module Src
+    class CLI
+      def self.start: (Array[String]) -> Integer
+    end
+  end
+end

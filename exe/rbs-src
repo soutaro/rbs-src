@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.join(__dir__, "../lib")
+
+require "rbs/src"
+require "rbs/src/cli"
+
+exit Rbs::Src::CLI.start(ARGV)

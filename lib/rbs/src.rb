@@ -2,6 +2,10 @@
 
 require_relative "src/version"
 
+require "rbs"
+
+require "rbs/src/link"
+
 module Rbs
   module Src
     class Error < StandardError; end

@@ -1,0 +1,6 @@
+module Rbs
+  module Src
+    class LockfileLoader
+    end
+  end
+end

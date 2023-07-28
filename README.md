@@ -1,24 +1,29 @@
-# Rbs::Src
+# rbs-src
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rbs/src`. To experiment with that code, run `bin/console` for an interactive prompt.
+rbs-src allows using and editing RBS files from `rbs collection`.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
-
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+    $ gem install rbs-src
 
 ## Usage
 
-TODO: Write usage instructions here
+### Downloading the latest RBS files
+
+    $ rbs-src setup --repo-prefix=tmp/rbs_collection --rbs-prefix=sig/gems
+
+### Making a symlink
+
+    $ rbs-src link https://github.com/ruby/gem_rbs_collection.git activesupport 6.0
+    $ rbs-src link --repo-prefix=... --rbs-prefix=... --force https://github.com/ruby/gem_rbs_collection.git activesupport 6.0
+
+### Opening the git repository
+
+    $ rbs-src path activesupport
+    $ rbs-src path --absolute activesupport
+
+    $ rbs-src open --with=open activesupport
+    $ rbs-src open --with="subl -w" activesupport
 
 ## Development
 
