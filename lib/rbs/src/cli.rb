@@ -141,8 +141,16 @@ module Rbs
 
           unless other_libs.empty?
             runner.push "Load other libraries yourself:" do
-              other_libs.each do |name, version|
-                runner.puts "#{name}-#{version}"
+              if has_gem?("steep")
+                runner.puts "Put the following lines in your Steepfile:"
+
+                other_libs.each do |name, version|
+                  runner.puts "  library('#{name}')"
+                end
+              else
+                other_libs.each do |name, version|
+                  runner.puts "-r #{name} \\"
+                end
               end
             end
           end
@@ -154,6 +162,13 @@ module Rbs
           puts "  known commands: setup, link"
           1
         end
+      end
+
+      def self.has_gem?(name)
+        ::Gem::Specification.find_by_name(name)
+        true
+      rescue
+        false
       end
     end
   end

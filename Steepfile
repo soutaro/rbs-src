@@ -15,25 +15,24 @@ target :lib do
   #   hash[D::Ruby::NoMethod] = :information
   # end
 
-
-  library "abbrev"
-  library "date"
-  library "dbm"
-  library "json"
-  library "logger"
-  library "minitest"
-  library "monitor"
-  library "mutex_m"
-  library "optparse"
-  library "pathname"
-  library "pstore"
-  library "rbs"
-  library "rdoc"
-  library "securerandom"
-  library "singleton"
-  library "time"
-  library "tsort"
-  library "yaml"
+  library('abbrev')
+  library('date')
+  library('dbm')
+  library('json')
+  library('logger')
+  library('minitest')
+  library('monitor')
+  library('mutex_m')
+  library('optparse')
+  library('pathname')
+  library('pstore')
+  library('rbs:3.1.2')
+  library('rdoc')
+  library('securerandom')
+  library('singleton')
+  library('time')
+  library('tsort')
+  library('yaml')
 
   disable_collection
 end

@@ -2,6 +2,8 @@ module Rbs
   module Src
     class CLI
       def self.start: (Array[String]) -> Integer
+
+      def self.has_gem?: (String) -> bool
     end
   end
 end
