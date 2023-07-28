@@ -3,12 +3,8 @@
 require_relative "src/version"
 
 require "rbs"
+require "open3"
 
-require "rbs/src/link"
-
-module Rbs
-  module Src
-    class Error < StandardError; end
-    # Your code goes here...
-  end
-end
+require "rbs/src/gem"
+require "rbs/src/lockfile_loader"
+require "rbs/src/command_runner"

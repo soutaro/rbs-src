@@ -1,0 +1,17 @@
+module Rbs
+  module Src
+    class CommandRunner
+      attr_reader stdout: IO
+
+      @level: Integer
+
+      def initialize: (stdout: IO) -> void
+
+      def push: (String message) { () -> void } -> void
+
+      def puts: (String) -> void
+
+      def execute!: (*String, ?chdir: Pathname) -> void
+    end
+  end
+end

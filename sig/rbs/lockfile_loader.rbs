@@ -1,6 +1,17 @@
+use RBS::Collection::Config::Lockfile
+
 module Rbs
   module Src
     class LockfileLoader
+      attr_reader lockfile: Lockfile
+
+      attr_reader repository_prefix: Pathname
+
+      attr_reader rbs_prefix: Pathname
+
+      def initialize: (lockfile: Lockfile, repository_prefix: Pathname, rbs_prefix: Pathname) -> void
+
+      def each_gem: () { (Gem, String git_repository_url, String commit) -> void } -> void
     end
   end
 end

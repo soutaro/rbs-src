@@ -1,0 +1,11 @@
+module Rbs
+  module Src
+    class RemoteSource
+      attr_reader repository_url: String
+
+      attr_reader commit: String
+
+      def initialize: (repository_url: String, commit: String) -> void
+    end
+  end
+end

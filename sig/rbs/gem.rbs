@@ -1,0 +1,29 @@
+module Rbs
+  module Src
+    class Gem
+      attr_reader name: String
+
+      attr_reader version: String
+
+      attr_reader repository_prefix: Pathname
+
+      attr_reader repository_dir: Pathname
+
+      attr_reader rbs_prefix: Pathname
+
+      def initialize: (name: String, version: String, repository_prefix: Pathname, repository_dir: Pathname, rbs_prefix: Pathname) -> void
+
+      def repository_root: () -> Pathname
+
+      # The path of the directory in the `#repository_prefix` that contains the RBS files of the gem
+      def repository_path: () -> Pathname
+
+      # The path of the directory in the `#rbs_prefix` that contains the RBS files of the gem
+      def rbs_path: () -> Pathname
+
+      def clone: (CommandRunner, repository_url: String, commit: String?) -> void
+
+      def link: () -> void
+    end
+  end
+end

@@ -15,3 +15,6 @@ path: .gem_rbs_collection
 
 gems:
   - name: pathname
+  - name: yaml
+  - name: activesupport
+    version: 6.0
