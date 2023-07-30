@@ -57,7 +57,7 @@ module Rbs
             end
 
             runner.push "Linking to #{gem.rbs_path}" do
-              unless gem.repository_path.exist?
+              unless gem.rbs_path.exist?
                 runner.puts "File.symlink..."
                 gem.link()
               else
@@ -117,7 +117,7 @@ module Rbs
               end
 
               runner.push "Linking to #{gem.rbs_path}" do
-                unless gem.repository_path.exist?
+                unless gem.rbs_path.exist?
                   runner.puts "File.symlink..."
                   gem.link()
                 else
