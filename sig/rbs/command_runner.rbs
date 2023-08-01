@@ -12,6 +12,8 @@ module Rbs
       def puts: (String) -> void
 
       def execute!: (*String, ?chdir: Pathname) -> void
+
+      def query!: (*String, ?chdir: Pathname) -> String
     end
   end
 end
