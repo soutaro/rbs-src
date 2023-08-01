@@ -3,7 +3,7 @@ require "optparse"
 module Rbs
   module Src
     class CLI
-      def self.start(argv)
+      def self.start(argv, stdout: STDOUT)
         command = argv.shift
 
         case command
@@ -45,7 +45,7 @@ module Rbs
             rbs_prefix: rbs_prefix
           )
 
-          runner = CommandRunner.new(stdout: STDOUT)
+          runner = CommandRunner.new(stdout: stdout)
 
           runner.push "Setting up #{gem.name}-#{gem.version}" do
             runner.push "Cloning git repository into #{gem.repository_root}" do
@@ -104,7 +104,7 @@ module Rbs
             rbs_prefix: rbs_prefix
           )
 
-          runner = CommandRunner.new(stdout: STDOUT)
+          runner = CommandRunner.new(stdout: stdout)
 
           loader.each_gem do |gem, repo, commit|
             runner.push "Setting up #{gem.name}-#{gem.version}" do
@@ -140,9 +140,9 @@ module Rbs
           other_libs.sort_by! { _1[0] }
 
           unless other_libs.empty?
-            runner.push "Load other libraries yourself:" do
+            runner.push "You have to load other libraries without rbs-collection:" do
               if has_gem?("steep")
-                runner.puts "Put the following lines in your Steepfile:"
+                runner.puts "Add the following lines in your Steepfile:"
 
                 other_libs.each do |name, version|
                   runner.puts "  library('#{name}')"
