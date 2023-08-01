@@ -11,38 +11,10 @@ gems:
   version: '0'
   source:
     type: stdlib
-- name: activesupport
-  version: '6.0'
-  source:
-    type: git
-    name: ruby/gem_rbs_collection
-    revision: aeede7258d020bfd509541e0c8075ce833292409
-    remote: https://github.com/ruby/gem_rbs_collection.git
-    repo_dir: gems
-- name: concurrent-ruby
-  version: '1.1'
-  source:
-    type: git
-    name: ruby/gem_rbs_collection
-    revision: aeede7258d020bfd509541e0c8075ce833292409
-    remote: https://github.com/ruby/gem_rbs_collection.git
-    repo_dir: gems
-- name: date
-  version: '0'
-  source:
-    type: stdlib
 - name: dbm
   version: '0'
   source:
     type: stdlib
-- name: i18n
-  version: '1.10'
-  source:
-    type: git
-    name: ruby/gem_rbs_collection
-    revision: aeede7258d020bfd509541e0c8075ce833292409
-    remote: https://github.com/ruby/gem_rbs_collection.git
-    repo_dir: gems
 - name: json
   version: '0'
   source:
@@ -80,18 +52,6 @@ gems:
   source:
     type: rubygems
 - name: rdoc
-  version: '0'
-  source:
-    type: stdlib
-- name: securerandom
-  version: '0'
-  source:
-    type: stdlib
-- name: singleton
-  version: '0'
-  source:
-    type: stdlib
-- name: time
   version: '0'
   source:
     type: stdlib
