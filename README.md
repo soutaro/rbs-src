@@ -54,7 +54,8 @@ target ... do
   # Existing config...
 
   # Add `#signature` call to support loading RBS files from symlinked directory
-  signature "sig/rbs-src/*/**/*.rbs"
+  signature "sig/rbs-src/*/*.rbs"
+  signature "sig/rbs-src/*/[^_]*/**/*.rbs"
 
   # Stop loading libraries through rbs-collection
   disable_collection()
