@@ -28,7 +28,7 @@ module Rbs
         runner.execute!("git", "clone", "--filter=blob:none", "--sparse", repository_url, repository_root.to_s)
         dirs = runner.query!("git", "ls-tree", "-d", "--name-only", "-z", "HEAD", chdir: repository_root).split("\0")
         dirs.delete(repository_dir.to_s)
-        runner.execute!("git", "sparse-checkout", "set", *dirs, repository_dir.join(name, version).to_s, chdir: repository_root)
+        runner.execute!("git", "sparse-checkout", "set", *dirs, repository_dir.join(name).to_s, chdir: repository_root)
         if commit
           runner.puts "git checkout..."
           runner.execute!("git", "checkout", commit, chdir: repository_root)
