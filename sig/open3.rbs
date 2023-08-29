@@ -1,0 +1,4 @@
+module Open3
+  def self.capture2e: (*String, ?chdir: Pathname) -> [String, Process::Status]
+                    | (Hash[String, String] env, *String, ?chdir: Pathname) -> [String, Process::Status]
+end
