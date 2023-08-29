@@ -43,6 +43,8 @@ Load gem dependencies from `rbs_collection.lock.yaml` and set up all repositorie
 
     $ rbs-src setup
 
+If the git repository content is edited, it runs `git stash` and `git reset --hard`.
+
 #### For Steep users
 
 You need to edit your Steepfile to let the type checker stop using rbs-collection.
@@ -77,6 +79,18 @@ This is typically useful for adding new gem to one of the collections.
 The command will clone the git repository for `active_emoji-0.0` and make a symlink to non-existing directory.
 You can add directories in the repository for `active_emoji-0.0` and start writing RBS files through the symlink.
 Once you finished the edit, you can push the RBS files to upstream!
+
+### rbs-src status
+
+The command checks the status of all git repositories.
+
+    $ rbs-src status
+    [ok] activesupport tmp/rbs-src/activesupport-7.0
+    [dirty] rainbow tmp/rbs-src/rainbow-3.0
+    [commit_mismatch] ast tmp/rbs-src/ast-2.4
+
+You may want to delete the repositories to reset, but use this command to ensure you don't have uncommitted changes.
+(Note `rbs-src status` doesn't check if you pushed the commits to remotes.)
 
 ## Development
 
