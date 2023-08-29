@@ -78,16 +78,15 @@ module Rbs
             opts.on("--rbs-prefix=PREFIX", "The location to put symlinks in (default: #{rbs_prefix})") { rbs_prefix = Pathname(_1) }
 
             opts.banner = <<~BANNER
-            Usage: rbs-src setup [options]
+              Usage: rbs-src setup [options]
 
-            Set up git repositories and symlinks in rbs_collection.yaml.
+              Set up git repositories and symlinks in rbs_collection.yaml.
 
-            Example:
-                $ rbs-src setup
+              Example:
+                  $ rbs-src setup
 
-            Options:
-          BANNER
-
+              Options:
+            BANNER
           end.parse!(argv)
 
           rbs_prefix.mkpath
@@ -108,10 +107,12 @@ module Rbs
 
           loader.each_gem do |gem, repo, commit|
             runner.push "Setting up #{gem.name}-#{gem.version}" do
-              runner.push "Cloning git repository into #{gem.repository_root}" do
-                if gem.repository_root.directory?
-                  runner.puts "Skipping already exist"
-                else
+              if gem.repository_root.directory?
+                runner.push "Checking out commit in #{gem.repository_root}" do
+                  gem.checkout(runner, repository_url: repo, commit: commit)
+              end
+              else
+                runner.push "Cloning git repository into #{gem.repository_root}" do
                   gem.clone(runner, repository_url: repo, commit: commit)
                 end
               end
@@ -159,7 +160,7 @@ module Rbs
         else
           puts "Unknown command: #{command}"
           puts
-          puts "  known commands: setup, link"
+          puts "  known commands: setup, status, link"
           1
         end
       end

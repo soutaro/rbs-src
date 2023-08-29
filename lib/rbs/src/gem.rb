@@ -23,6 +23,24 @@ module Rbs
         rbs_prefix + "#{name}-#{version}"
       end
 
+      def checkout(runner, repository_url:, commit:)
+        unless runner.query!("git", "status", "-s", "-z", chdir: repository_root).split("\0").empty?
+          runner.puts "📣 Stashing uncommited changes... Restore the changes by: `git stash pop`"
+          runner.execute!("git", "stash", "-u", "-m", "Stash by rbs-src on #{name}-#{version}", chdir: repository_root)
+        end
+
+        return if runner.query!("git", "rev-parse", "HEAD", chdir: repository_root).chomp == commit
+
+        unless runner.query?("git", "cat-file", "-e", commit, chdir: repository_root)
+          runner.puts "💾 Fetching from #{repository_url}..."
+          runner.execute!("git", "remote", "set-url", "origin", repository_url, chdir: repository_root)
+          runner.execute!("git", "fetch", "origin", chdir: repository_root)
+        end
+
+        runner.puts "💪 Checking out the commit #{commit}..."
+        runner.execute!("git", "reset", "--hard", commit, chdir: repository_root)
+      end
+
       def clone(runner, repository_url:, commit:)
         runner.puts "git clone..."
         runner.execute!("git", "clone", "--filter=blob:none", "--sparse", repository_url, repository_root.to_s)

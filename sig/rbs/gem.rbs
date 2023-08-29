@@ -23,6 +23,8 @@ module Rbs
 
       def clone: (CommandRunner, repository_url: String, commit: String?) -> void
 
+      def checkout: (CommandRunner, repository_url: String, commit: String) -> void
+
       def link: () -> void
     end
   end

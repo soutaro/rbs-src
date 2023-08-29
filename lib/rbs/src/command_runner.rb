@@ -38,6 +38,17 @@ module Rbs
         end
       end
 
+      def query?(*command, chdir: Pathname.pwd)
+        # @type var out: String
+        # @type var status: Process::Status
+
+        out, status = Open3.capture2e(*command, chdir: chdir)
+
+        if status.success?
+          out
+        end
+      end
+
       def query!(*command, chdir: Pathname.pwd)
         # @type var out: String
         # @type var status: Process::Status
