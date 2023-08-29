@@ -23,6 +23,18 @@ module Rbs
         rbs_prefix + "#{name}-#{version}"
       end
 
+      def status(runner, commit:)
+        unless runner.query!("git", "status", "-s", "-z", chdir: repository_root).split("\0").empty?
+          return :dirty
+        end
+
+        if runner.query!("git", "rev-parse", "HEAD", chdir: repository_root).chomp != commit
+          return :commit_mismatch
+        end
+
+        :ok
+      end
+
       def checkout(runner, repository_url:, commit:)
         unless runner.query!("git", "status", "-s", "-z", chdir: repository_root).split("\0").empty?
           runner.puts "📣 Stashing uncommited changes... Restore the changes by: `git stash pop`"

@@ -26,6 +26,8 @@ module Rbs
       def checkout: (CommandRunner, repository_url: String, commit: String) -> void
 
       def link: () -> void
+
+      def status: (CommandRunner, commit: String) -> (:ok | :dirty | :commit_mismatch)
     end
   end
 end

@@ -67,6 +67,61 @@ module Rbs
           end
 
           0
+
+        when "status"
+          rbs_collection_lock_path = RBS::Collection::Config.to_lockfile_path(RBS::Collection::Config::PATH)
+          repository_prefix = Pathname("tmp/rbs-src")
+          rbs_prefix = Pathname("sig/rbs-src")
+
+          OptionParser.new do |opts|
+            opts.banner = <<~BANNER
+              Usage: rbs-src status
+
+              Prints the status of git repositories.
+
+              Example:
+                  $ rbs-src status [GEMs...]
+
+              Options:
+            BANNER
+          end.parse!(argv)
+
+          unless argv.empty?
+            gems = Set.new(argv)
+          end
+
+          rbs_prefix.mkpath
+          rbs_prefix.mkpath
+
+          lockfile = RBS::Collection::Config::Lockfile.from_lockfile(
+            lockfile_path: rbs_collection_lock_path,
+            data: YAML.safe_load(rbs_collection_lock_path.read)
+          )
+
+          loader = LockfileLoader.new(
+            lockfile: lockfile,
+            repository_prefix: repository_prefix,
+            rbs_prefix: rbs_prefix
+          )
+
+          non_ok_count = 0
+
+          runner = CommandRunner.new(stdout: stdout)
+
+          loader.each_gem do |gem, repo, commit|
+            if !gems || gems.include?(gem.name)
+              status = gem.status(runner, commit: commit)
+              unless status == :ok
+                non_ok_count = non_ok_count + 1
+                icon = "🚨"
+              end
+
+              puts "[#{status}] #{icon}#{gem.name} #{gem.repository_root}"
+            end
+          end
+
+          non_ok_count == 0 ? 0 : 1
+
         when "setup"
           rbs_collection_lock_path = RBS::Collection::Config.to_lockfile_path(RBS::Collection::Config::PATH)
           repository_prefix = Pathname("tmp/rbs-src")
