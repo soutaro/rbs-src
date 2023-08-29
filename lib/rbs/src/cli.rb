@@ -71,9 +71,11 @@ module Rbs
         when "status"
           rbs_collection_lock_path = RBS::Collection::Config.to_lockfile_path(RBS::Collection::Config::PATH)
           repository_prefix = Pathname("tmp/rbs-src")
-          rbs_prefix = Pathname("sig/rbs-src")
 
           OptionParser.new do |opts|
+            opts.on("--rbs-collection-lock=PATH", "The path to rbs_collection.lock.yaml (default: #{rbs_collection_lock_path})") { rbs_collection_lock_path = Pathname(_1) }
+            opts.on("--repo-prefix=PREFIX", "The location to put repository in (default: #{repository_prefix})") { repository_prefix = Pathname(_1) }
+
             opts.banner = <<~BANNER
               Usage: rbs-src status
 
@@ -90,8 +92,7 @@ module Rbs
             gems = Set.new(argv)
           end
 
-          rbs_prefix.mkpath
-          rbs_prefix.mkpath
+          repository_prefix.mkpath
 
           lockfile = RBS::Collection::Config::Lockfile.from_lockfile(
             lockfile_path: rbs_collection_lock_path,
@@ -111,12 +112,17 @@ module Rbs
           loader.each_gem do |gem, repo, commit|
             if !gems || gems.include?(gem.name)
               status = gem.status(runner, commit: commit)
-              unless status == :ok
+              case status
+              when :ok
+                string = Rainbow("ok").blue
+              when :dirty
+                string = Rainbow("dirty").red
+              when :commit_mismatch
                 non_ok_count = non_ok_count + 1
-                icon = "🚨"
+                string = Rainbow("commit_mismatch").yellow
               end
 
-              puts "[#{status}] #{icon}#{gem.name} #{gem.repository_root}"
+              stdout.puts "[#{string}] #{gem.name} #{gem.repository_root}"
             end
           end
 
@@ -144,7 +150,7 @@ module Rbs
             BANNER
           end.parse!(argv)
 
-          rbs_prefix.mkpath
+          repository_prefix.mkpath
           rbs_prefix.mkpath
 
           lockfile = RBS::Collection::Config::Lockfile.from_lockfile(

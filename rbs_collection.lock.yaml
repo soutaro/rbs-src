@@ -2,7 +2,7 @@
 sources:
 - type: git
   name: ruby/gem_rbs_collection
-  revision: '04470595f7a634757e160f61aafeb50536322bba'
+  revision: 306d1aec19defeb177e217d8aad9812a52bcd5eb
   remote: https://github.com/ruby/gem_rbs_collection.git
   repo_dir: gems
 path: ".gem_rbs_collection"
@@ -47,6 +47,14 @@ gems:
   version: '0'
   source:
     type: stdlib
+- name: rainbow
+  version: '3.0'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 306d1aec19defeb177e217d8aad9812a52bcd5eb
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
 - name: rbs
   version: 3.1.2
   source:

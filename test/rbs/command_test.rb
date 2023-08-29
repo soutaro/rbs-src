@@ -163,5 +163,221 @@ class Rbs::Src::CommandTest < Minitest::Test
       end
     end
   end
+
+  def test_setup__checkout
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        (Pathname.pwd + "rbs_collection.yaml").write(<<~YAML)
+          sources:
+            - type: git
+              name: ruby/gem_rbs_collection
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              revision: main
+              repo_dir: gems
+
+          path: .gem_rbs_collection
+
+          gems:
+            - name: ast
+            - name: rainbow
+        YAML
+        (Pathname.pwd + "rbs_collection.lock.yaml").write(<<~YAML)
+          ---
+          sources:
+          - type: git
+            name: ruby/gem_rbs_collection
+            revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+            remote: https://github.com/ruby/gem_rbs_collection.git
+            repo_dir: gems
+          path: ".gem_rbs_collection"
+          gems:
+          - name: abbrev
+            version: '0'
+            source:
+              type: stdlib
+          - name: ast
+            version: '2.4'
+            source:
+              type: git
+              name: ruby/gem_rbs_collection
+              revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              repo_dir: gems
+          - name: json
+            version: '0'
+            source:
+              type: stdlib
+          - name: logger
+            version: '0'
+            source:
+              type: stdlib
+          - name: minitest
+            version: '0'
+            source:
+              type: stdlib
+          - name: monitor
+            version: '0'
+            source:
+              type: stdlib
+          - name: mutex_m
+            version: '0'
+            source:
+              type: stdlib
+          - name: optparse
+            version: '0'
+            source:
+              type: stdlib
+          - name: pathname
+            version: '0'
+            source:
+              type: stdlib
+          - name: rainbow
+            version: '3.0'
+            source:
+              type: git
+              name: ruby/gem_rbs_collection
+              revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              repo_dir: gems
+          - name: rbs
+            version: 3.1.2
+            source:
+              type: rubygems
+          - name: rdoc
+            version: '0'
+            source:
+              type: stdlib
+          - name: tsort
+            version: '0'
+            source:
+              type: stdlib
+          gemfile_lock_path: "Gemfile.lock"
+        YAML
+
+        Rbs::Src::CLI.start(%w(setup), stdout: stdout)
+
+        stdout.string = String.new
+
+        Pathname.pwd.join("sig/rbs-src/ast-2.4/foobar.rbs").write("Foo: Integer")
+        Open3.capture2e("git", "reset", "--hard", "306d1ae", chdir: Pathname.pwd.join("tmp/rbs-src/rainbow-3.0"))
+
+        Rbs::Src::CLI.start(%w(setup), stdout: stdout)
+
+        out, _ = Open3.capture2e("git", "status", "-s", chdir: Pathname.pwd.join("tmp/rbs-src/ast-2.4"))
+        assert_empty out
+
+        sha, _ = Open3.capture2e("git", "rev-parse", "HEAD", chdir: Pathname.pwd.join("tmp/rbs-src/rainbow-3.0"))
+        sha.chomp!
+        assert_equal "9330d49993d18362cce9190b9596f03d1f4915f8", sha
+      end
+    end
+  end
+
+  def test_status
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        (Pathname.pwd + "rbs_collection.yaml").write(<<~YAML)
+          sources:
+            - type: git
+              name: ruby/gem_rbs_collection
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              revision: main
+              repo_dir: gems
+
+          path: .gem_rbs_collection
+
+          gems:
+            - name: ast
+            - name: rainbow
+        YAML
+        (Pathname.pwd + "rbs_collection.lock.yaml").write(<<~YAML)
+          ---
+          sources:
+          - type: git
+            name: ruby/gem_rbs_collection
+            revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+            remote: https://github.com/ruby/gem_rbs_collection.git
+            repo_dir: gems
+          path: ".gem_rbs_collection"
+          gems:
+          - name: abbrev
+            version: '0'
+            source:
+              type: stdlib
+          - name: ast
+            version: '2.4'
+            source:
+              type: git
+              name: ruby/gem_rbs_collection
+              revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              repo_dir: gems
+          - name: json
+            version: '0'
+            source:
+              type: stdlib
+          - name: logger
+            version: '0'
+            source:
+              type: stdlib
+          - name: minitest
+            version: '0'
+            source:
+              type: stdlib
+          - name: monitor
+            version: '0'
+            source:
+              type: stdlib
+          - name: mutex_m
+            version: '0'
+            source:
+              type: stdlib
+          - name: optparse
+            version: '0'
+            source:
+              type: stdlib
+          - name: pathname
+            version: '0'
+            source:
+              type: stdlib
+          - name: rainbow
+            version: '3.0'
+            source:
+              type: git
+              name: ruby/gem_rbs_collection
+              revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              repo_dir: gems
+          - name: rbs
+            version: 3.1.2
+            source:
+              type: rubygems
+          - name: rdoc
+            version: '0'
+            source:
+              type: stdlib
+          - name: tsort
+            version: '0'
+            source:
+              type: stdlib
+          gemfile_lock_path: "Gemfile.lock"
+        YAML
+
+        Rbs::Src::CLI.start(%w(setup), stdout: stdout)
+
+        Pathname.pwd.join("sig/rbs-src/ast-2.4/foobar.rbs").write("Foo: Integer")
+        Open3.capture2e("git", "reset", "--hard", "306d1ae", chdir: Pathname.pwd.join("tmp/rbs-src/rainbow-3.0"))
+
+        stdout.string = String.new
+
+        Rbs::Src::CLI.start(%w(status), stdout: stdout)
+
+        assert_equal <<~MESSAGE, stdout.string
+          [dirty] ast tmp/rbs-src/ast-2.4
+          [commit_mismatch] rainbow tmp/rbs-src/rainbow-3.0
+        MESSAGE
+      end
+    end
+  end
 end
 

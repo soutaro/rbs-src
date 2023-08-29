@@ -4,6 +4,7 @@ require_relative "src/version"
 
 require "rbs"
 require "open3"
+require "rainbow"
 
 require "rbs/src/gem"
 require "rbs/src/lockfile_loader"
