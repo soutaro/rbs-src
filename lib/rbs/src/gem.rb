@@ -19,8 +19,8 @@ module Rbs
         repository_root.join(repository_dir, name, version)
       end
 
-      def rbs_path
-        rbs_prefix + "#{name}-#{version}"
+      def rbs_path(suffix = version)
+        rbs_prefix + "#{name}-#{suffix}"
       end
 
       def status(runner, commit:)
@@ -66,6 +66,9 @@ module Rbs
       end
 
       def link
+        Pathname.glob(rbs_path("*").to_s).each do |path|
+          File.unlink(path.to_s)
+        end
         File.symlink(repository_path.relative_path_from(rbs_path.parent), rbs_path)
       end
     end

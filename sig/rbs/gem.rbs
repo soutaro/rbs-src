@@ -19,7 +19,7 @@ module Rbs
       def repository_path: () -> Pathname
 
       # The path of the directory in the `#rbs_prefix` that contains the RBS files of the gem
-      def rbs_path: () -> Pathname
+      def rbs_path: (?String suffix) -> Pathname
 
       def clone: (CommandRunner, repository_url: String, commit: String?) -> void
 
