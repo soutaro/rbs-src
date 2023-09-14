@@ -50,7 +50,7 @@ module Rbs
         end
 
         runner.puts "💪 Checking out the commit #{commit}..."
-        runner.execute!("git", "reset", "--hard", commit, chdir: repository_root)
+        runner.execute!("git", "checkout", commit, chdir: repository_root)
       end
 
       def clone(runner, repository_url:, commit:)
