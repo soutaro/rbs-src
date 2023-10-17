@@ -45,9 +45,15 @@ Load gem dependencies from `rbs_collection.lock.yaml` and set up all repositorie
 
 If the git repository content is edited, it runs `git stash` and `git reset --hard`.
 
+It accepts `--output` option to write the dependencies to a file.
+
+    $ rbs-src setup --output
+
+You can load the dependencies to your type checkers from the file.
+
 #### For Steep users
 
-You need to edit your Steepfile to let the type checker stop using rbs-collection.
+The recommended setup for Steep is the following:
 
 ```ruby
 # Steepfile
@@ -55,18 +61,31 @@ You need to edit your Steepfile to let the type checker stop using rbs-collectio
 target ... do
   # Existing config...
 
-  # Add `#signature` call to support loading RBS files from symlinked directory
-  signature "sig/rbs-src/*/*.rbs"
-  signature "sig/rbs-src/*/[^_]*/**/*.rbs"
+  # Assume we use `rbs-src setup --output` to generate `rbs_src.dep` file
+  if (dep_path = Pathname("rbs_src.dep")).file?
+    # Stop loading libraries through rbs-collection
+    disable_collection()
 
-  # Stop loading libraries through rbs-collection
-  disable_collection()
+    signature "sig/rbs-src/*/*.rbs"
+    signature "sig/rbs-src/*/[^_]*/**/*.rbs"
 
-  # Load standard libraries and gems manually
-  library('abbrev')
-  library('date')
-  # ...
+    dep_path.readlines().each {|lib| library(lib.chomp) }
+  end
 end
+```
+
+In this setup, you can use Steep without using `rbs-src` until you run `rbs-src setup --output`.
+Once you run `rbs-src setup --output`, it generates `rbs_src.dep` file and `Steepfile` loads the dependencies from the file.
+
+```sh
+# When you install your rbs_collection dependencies
+$ rbs collection install && rbs-src setup --output
+
+# When you update your rbs_collection dependencies
+$ rbs collection update && rbs-src setup --output
+
+# When you stop using rbs-src
+$ rm -rf rbs_src.dep tmp/rbs-src sig/rbs-src
 ```
 
 ### rbs-src link
