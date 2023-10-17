@@ -132,11 +132,13 @@ module Rbs
           rbs_collection_lock_path = RBS::Collection::Config.to_lockfile_path(RBS::Collection::Config::PATH)
           repository_prefix = Pathname("tmp/rbs-src")
           rbs_prefix = Pathname("sig/rbs-src")
+          output_path= nil #: Pathname?
 
           OptionParser.new do |opts|
             opts.on("--rbs-collection-lock=PATH", "The path to rbs_collection.lock.yaml (default: #{rbs_collection_lock_path})") { rbs_collection_lock_path = Pathname(_1) }
             opts.on("--repo-prefix=PREFIX", "The location to put repository in (default: #{repository_prefix})") { repository_prefix = Pathname(_1) }
             opts.on("--rbs-prefix=PREFIX", "The location to put symlinks in (default: #{rbs_prefix})") { rbs_prefix = Pathname(_1) }
+            opts.on("--output[=PATH]", "-o[PATH]", "The path to write the list of stdlib dependencies (default: rbs_src.dep)") {|path| output_path = Pathname(path || "rbs_src.dep") }
 
             opts.banner = <<~BANNER
               Usage: rbs-src setup [options]
@@ -201,17 +203,27 @@ module Rbs
 
           other_libs.sort_by! { _1[0] }
 
-          unless other_libs.empty?
-            runner.push "You have to load other libraries without rbs-collection:" do
-              if has_gem?("steep")
-                runner.puts "Add the following lines in your Steepfile:"
-
-                other_libs.each do |name, version|
-                  runner.puts "  library('#{name}')"
+          if output_path
+            runner.push "Writing dependencies to #{output_path}:" do
+              output_path.open("w") do |io|
+                other_libs.each do |name, _|
+                  io.puts name
                 end
-              else
-                other_libs.each do |name, version|
-                  runner.puts "-r #{name} \\"
+              end
+            end
+          else
+            unless other_libs.empty?
+              runner.push "You have to load other libraries without rbs-collection:" do
+                if has_gem?("steep")
+                  runner.puts "Add the following lines in your Steepfile:"
+
+                  other_libs.each do |name, version|
+                    runner.puts "  library('#{name}')"
+                  end
+                else
+                  other_libs.each do |name, version|
+                    runner.puts "-r #{name} \\"
+                  end
                 end
               end
             end
