@@ -273,6 +273,105 @@ class Rbs::Src::CommandTest < Minitest::Test
     end
   end
 
+  def test_setup__output
+    Dir.mktmpdir do |dir|
+      Dir.chdir(dir) do
+        (Pathname.pwd + "rbs_collection.yaml").write(<<~YAML)
+          sources:
+            - type: git
+              name: ruby/gem_rbs_collection
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              revision: main
+              repo_dir: gems
+
+          path: .gem_rbs_collection
+
+          gems:
+            - name: ast
+            - name: rainbow
+        YAML
+        (Pathname.pwd + "rbs_collection.lock.yaml").write(<<~YAML)
+          ---
+          sources:
+          - type: git
+            name: ruby/gem_rbs_collection
+            revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+            remote: https://github.com/ruby/gem_rbs_collection.git
+            repo_dir: gems
+          path: ".gem_rbs_collection"
+          gems:
+          - name: abbrev
+            version: '0'
+            source:
+              type: stdlib
+          - name: ast
+            version: '2.4'
+            source:
+              type: git
+              name: ruby/gem_rbs_collection
+              revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              repo_dir: gems
+          - name: json
+            version: '0'
+            source:
+              type: stdlib
+          - name: logger
+            version: '0'
+            source:
+              type: stdlib
+          - name: minitest
+            version: '0'
+            source:
+              type: stdlib
+          - name: monitor
+            version: '0'
+            source:
+              type: stdlib
+          - name: mutex_m
+            version: '0'
+            source:
+              type: stdlib
+          - name: optparse
+            version: '0'
+            source:
+              type: stdlib
+          - name: pathname
+            version: '0'
+            source:
+              type: stdlib
+          - name: rainbow
+            version: '3.0'
+            source:
+              type: git
+              name: ruby/gem_rbs_collection
+              revision: 9330d49993d18362cce9190b9596f03d1f4915f8
+              remote: https://github.com/ruby/gem_rbs_collection.git
+              repo_dir: gems
+          - name: rbs
+            version: 3.1.2
+            source:
+              type: rubygems
+          - name: rdoc
+            version: '0'
+            source:
+              type: stdlib
+          - name: tsort
+            version: '0'
+            source:
+              type: stdlib
+          gemfile_lock_path: "Gemfile.lock"
+        YAML
+
+        Rbs::Src::CLI.start(%w(setup -o), stdout: stdout)
+
+        dep_path = Pathname("rbs_src.dep")
+        assert_predicate dep_path, :file?
+        assert_equal %w(abbrev json logger minitest monitor mutex_m optparse pathname rbs rdoc tsort), dep_path.readlines(chomp: true)
+      end
+    end
+  end
+
   def test_status
     Dir.mktmpdir do |dir|
       Dir.chdir(dir) do
